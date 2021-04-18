@@ -1,0 +1,71 @@
+<<<<<<< HEAD
+import datetime
+import os
+import smtplib
+import webbrowser
+import pyttsx3
+import speech_recognition as sr
+import wikipedia
+import urllib3
+
+import pyttsx3, os,sys,pywhatkit,datetime,keyboard,smtplib,youtube_dl,math,subprocess,wikipedia,winsound,pyaudio
+import speech_recognition as sr 
+import webbrowser as web
+# The text to speech voice modification
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
+#variables
+hour = int(datetime.datetime.now().hour)
+listener = sr.Recognizer()
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+def wishMe():
+    if hour <=0 & hour > 12:
+        speak("Good Morning SaiSaaketh")
+    elif hour > 12 & hour < 15:
+        speak("Good Afternon Saaketh")
+    else:
+         speak("Good Evening Saaketh")
+def takecommand():
+         try:
+            with sr.Microphone() as source:
+                speak("Listening...")
+                print("listening...")
+                voice = listener.listen(source)
+                command = listener.recognize_google(voice) 
+                command = command.lower()
+         except:
+                 pass
+                 return command
+def ytdl():
+    speak("What Do you wanna download")
+    speak('a channel or a video or a playlists')
+    if 'channel' in query:
+        speak('which channel do you wanna download')
+def classify():
+         if 'wikipedia' in command:
+             command = command.replace('wikipedia','')
+             results = wikipedia.summary(command)
+             print("Saaketh Said:",command)
+             print(results)
+             speak(results)
+         elif 'play' in command:
+             print("Saaketh Said:",command)
+             print("Hover Said: Playing",command)
+             command = command.replace('play','')
+             speak("playing",command)
+             pywhatkit.playonyt(command)
+         elif 'open' & 'on brave' in command:
+             bravepath = "C://Program Files//BraveSoftware//Application//brave.exe"          
+             web.get(bravepath).open('https://google.com') 
+def run_hover():
+        command = takecommand()
+        if 'hover' in command:
+          speak('Initializing Hover')
+          wishMe()
+          takecommand()
+          classify()
+while True:
+    run_hover()          
