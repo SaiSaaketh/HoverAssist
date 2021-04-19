@@ -84,13 +84,12 @@ def Execution():
               speak('I donot know that') 
 #wakeword function is used to wake the assistant using the word              
 def wakeword():
-        speak('Inisialising Hover')
-        wishMe()    
-        while True:
-            command = getcommand()
-            if 'friday' in command:
-                Execution()
-            elif 'shut up' in command or 'goodbye' in command:
-                sys.exit()
-            else:
-                hoverbusy = "no"        
+            wishMe()    
+            while True:
+                command = getcommand()
+                if 'friday' in command:
+                    Execution()
+                elif 'shut up' in command or 'goodbye' in command:
+                    sys.exit()
+                else:
+                  hoverbusy = "no"        
