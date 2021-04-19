@@ -8,18 +8,21 @@ engine.setProperty('voice', voices[1].id)
 #variables
 hour = int(datetime.datetime.now().hour)
 listener = sr.Recognizer()
-#This Function will make the system speak
+#This Speak Function will make the system speak
 def speak(text):
     engine.say(text)
     engine.runAndWait()
-    
+# Wishme Function wishes you Good Morning Good Afternoon  Good Evening or good Nigth
 def wishMe():
     if hour <=0 & hour > 12:
         speak("Good Morning SaiSaaketh")
     elif hour > 12 & hour < 15:
         speak("Good Afternon Saaketh")
-    else:
+    elif hour > 9 & hour < 15:
          speak("Good Evening Saaketh")
+    else:
+         speak("Good Night Saaketh")
+#listentouser function will listen to the user and recognize the spoken words speech Synthesis         
 def listentouser():
     with sr.Microphone() as source:
         speak('Listening...')
@@ -39,6 +42,7 @@ def listentouser():
     except:
         pass
     return command
+#getcommand function is used to recognize spoked words but this time i'm using this function to use the wake word which is in function line  83
 def getcommand():
     command = " "
     try:
@@ -50,7 +54,9 @@ def getcommand():
     except:
         pass
     return command
+#Execution function is used to do a particular task given by the user if task or the skill is coded
 def Execution():
+    #Note:the code below the lines from 60 to 81 can be edited. In case you want to make your own skill and the other part of the code should not be edited
          command = listentouser().lower()
          if 'wikipedia' in command:
              command = command.replace('wikipedia','')
@@ -75,9 +81,10 @@ def Execution():
          elif 'i donot need anything' in command or 'bye' in command:
              sys.exit()
          else:
-              speak('I donot know that')   
-def run():
-        speak('Inisialising Friday')
+              speak('I donot know that') 
+#wakeword function is used to wake the assistant using the word              
+def wakeword():
+        speak('Inisialising Hover')
         wishMe()    
         while True:
             command = getcommand()
@@ -86,4 +93,4 @@ def run():
             elif 'shut up' in command or 'goodbye' in command:
                 sys.exit()
             else:
-                hoverbusy = "none"        
+                hoverbusy = "no"        
