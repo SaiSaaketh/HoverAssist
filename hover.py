@@ -8,10 +8,11 @@ engine.setProperty('voice', voices[1].id)
 #variables
 hour = int(datetime.datetime.now().hour)
 listener = sr.Recognizer()
+#This Function will make the system speak
 def speak(text):
-
     engine.say(text)
     engine.runAndWait()
+    
 def wishMe():
     if hour <=0 & hour > 12:
         speak("Good Morning SaiSaaketh")
@@ -19,7 +20,7 @@ def wishMe():
         speak("Good Afternon Saaketh")
     else:
          speak("Good Evening Saaketh")
-def takecommand():
+def listentouser():
     with sr.Microphone() as source:
         speak('Listening...')
         print('listening...')
@@ -49,8 +50,8 @@ def getcommand():
     except:
         pass
     return command
-def TaskExecution():
-         command = takecommand().lower()
+def Execution():
+         command = listentouser().lower()
          if 'wikipedia' in command:
              command = command.replace('wikipedia','')
              results = wikipedia.summary(command)
@@ -75,14 +76,14 @@ def TaskExecution():
              sys.exit()
          else:
               speak('I donot know that')   
-
-speak('Inisialising Friday')
-wishMe()    
-while True:
-     command = getcommand()
-     if 'friday' in command:
-         TaskExecution()
-     elif 'shut up' in command or 'goodbye' in command:
-         sys.exit()
-     else:
-          hoverbusy = "none"        
+def run():
+        speak('Inisialising Friday')
+        wishMe()    
+        while True:
+            command = getcommand()
+            if 'friday' in command:
+                Execution()
+            elif 'shut up' in command or 'goodbye' in command:
+                sys.exit()
+            else:
+                hoverbusy = "none"        
