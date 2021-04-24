@@ -63,7 +63,7 @@ if __name__ == "__main__":
             speak('Opening Notepad')
             npath = "C:\\Windows\\system32\\notepad.exe"
             os.startfile(npath)
-        elif 'open cmd' in query or 'open command prompt' in query:
+        elif 'open cmd' in query or 'open query prompt' in query:
             speak('Opening CMD')
             os.system("start cmd")
         elif 'open camera'in query:
@@ -97,7 +97,12 @@ if __name__ == "__main__":
             search = takecommand()
             webbrowser.open(f'www.duckduckgo.com?q={search}')
         elif 'send message' in query:
-            pywhatkit.sendwhatmsg("+918919005029","this is testing man bro",16,21)
+            speak('Whom Do You Want to send')
+            receiver1 = takecommand().lower()
+            contacts = {
+                'mom'
+            }
+            pywhatkit.sendwhatmsg(f"","this is testing man bro",11,50)
         elif 'security camera' in query or 'i am going out' in query:
              cam = cv2.VideoCapture(0)
              while cam.isOpened():
@@ -170,9 +175,23 @@ if __name__ == "__main__":
                     send_more = get_info()
                     if 'yes' in send_more:
                         get_email_info()
+        elif 'on chrome' in query:
+             bravepath = "C://Program Files//BraveSoftware//Application//brave.exe"
+             query= query.replace('on chrome','')
+             if 'dot' in query:
+                query = query.replace('dot','.')         
+                webbrowser.open(command)
+        elif 'i donot need anything' in query or 'bye' in query:
+             sys.exit()    
+        elif 'shutdown' in query or 'shut down' in query:
+             speak('Shutting Down Windows')
+             os.system("shutdown -s 0")               
         elif 'join my english class' in query:
             webbrowser.open("https://us04web.zoom.us/j/6683041782?pwd=Ry9oQVJqM0hkTzJSaEtCY2owS21hQT09")
         elif 'join my history class' in query:
-            webbrowser.open("https://us04web.zoom.us/j/2740958675?pwd=bDlUVXFVckg1SWJOR1lQbjJQZUhNUT09")        
+            webbrowser.open("https://us04web.zoom.us/j/2740958675?pwd=bDlUVXFVckg1SWJOR1lQbjJQZUhNUT09")
+        elif 'whatsapp' in query:
+            whats = "C:\\Users\\JAGADEESWARARAO\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
+            os.startfile(whats)     
         else:
             speak('i donot know that')     

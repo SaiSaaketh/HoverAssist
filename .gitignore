@@ -1,7 +1,0 @@
-.gitignore
-.vscode/
-.venv/
-.git/
-.github/
-*.txt
-*.bat
