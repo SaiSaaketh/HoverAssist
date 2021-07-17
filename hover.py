@@ -17,7 +17,7 @@ import webbrowser
 engine = pyttsx3.init('sapi5')
 voice = engine.getProperty('voices')
 print(voice)
-engine.setProperty('voices',voice[2].id)
+engine.setProperty('voices',voice[0].id)
 rate = engine.getProperty('rate')
 engine.setProperty('rate',170)
  
