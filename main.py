@@ -8,12 +8,20 @@ import requests
 import wikipedia
 import sys
 import winsound
-import smtplib
 import webbrowser
 import pyautogui
 import urllib.request
 import re
+import winapps
 from pyttsx3.drivers import sapi5
+
+# lists
+takephoto = {"take a shot", "take a photo", "take a snap",
+             "cheese", "Yo take a photo", "take my family photo", "Snap that"}
+iamgoing = {"i am going", "I am going out",
+            "I'll be right back", "I'm Leaving", "I am leaving"}
+hour = int(datetime.datetime.now().hour)
+
 
 def speak(audio):
     engine = pyttsx3.init()
@@ -24,22 +32,51 @@ def speak(audio):
     engine.runAndWait()
 
 
+def listen():
+    listener = sr.Recognizer()
+    while True:
+        try:
+            with sr.Microphone() as source:
+                print("Listening.")
+                listener.adjust_for_ambient_noise(source)
+                listener.dynamic_energy_threshold = 5000
+                audio = listener.listen(source, timeout=5.0)
+                response = listener.recognize_google(audio, language="en-in")
+                print(response)
+                if "Hawa" in response or "how" in response:
+                    speak("How can I help you?")
+                    TaskExec()
+
+                else:
+                    pass
+        except sr.WaitTimeoutError:
+            pass
+        except sr.UnknownValueError:
+            pass
+        except sr.RequestError:
+            print("Network error.")
+
+
 def takecommand():
     try:
         listener = sr.Recognizer()
-        with sr.Microphone(device_index=0) as source:
+        with sr.Microphone() as source:
+            listener.adjust_for_ambient_noise(source)
+            listener.dynamic_energy_threshold = 3000
             speak('listening...')
-            voice = listener.listen(source)
-            command = listener.recognize_google(voice,language="en-in")
-            command = command.lower()
+            voice = listener.listen(source, timeout=5.0)
+            command = listener.recognize_google(voice, language="en-in")
             print(command)
-    except:
+    except sr.WaitTimeoutError:
         pass
-    return command
+    except sr.UnknownValueError:
+        pass
+    except sr.RequestError:
+        print("Network error.")
+    return command.lower()
 
 
 def wish():
-    hour = int(datetime.datetime.now().hour)
     if hour > 0 and hour < 12:
         speak('Good Morning')
     elif hour > 12 and hour > 15:
@@ -51,13 +88,14 @@ def wish():
 def TaskExec():
     if __name__ == "__main__":
         query = takecommand().lower()
-        if 'open notepad' in query:
-            speak('Opening Notepad')
-            npath = "C:\\Windows\\system32\\notepad.exe"
-            os.startfile(npath)
-        elif 'edge' in query:
-            speak("opening microsoft Edge ")
-            webbrowser.open("https://www.bing.com")
+        if query == "open notepad":
+            os.system("notepad")
+        elif "what is the time" in query:
+            min = datetime.datetime.now().minute
+            speak(f"It is {hour} hours {min} minutes")
+        elif 'browser' in query:
+            speak("opening Browser ")
+            webbrowser.open("https://www.google.com")
         elif 'open cmd' in query or 'open command prompt' in query:
             speak('Opening CMD')
             os.system("start cmd")
@@ -80,18 +118,19 @@ def TaskExec():
             results = wikipedia.summary(query, sentences=3)
             print("According to wikipedia"+results)
             speak('Accoding to wikipedia'+results)
-        elif 'explorer' in query:
-            speak("opening File explorer")
-            os.system("explorer")
         elif 'open youtube' in query:
             webbrowser.open('www.youtube.com')
         elif 'open stack overflow' in query:
             webbrowser.open('www.stackoverflow.com')
-        elif 'duckduckgo' in query:
-            speak('what should i search duckduckgo for')
-            search = takecommand()
+        elif 'search' in query:
+            search = query.replace("search", "")
             webbrowser.open(f'www.duckduckgo.com?q={search}')
-        elif 'security camera' in query or 'i am going' in query:
+        elif "whatsapp" in query:
+            speak("opening whatsapp")
+            whats = "C:\\Users\\JAGADEESWARARAO\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
+            os.startfile(whats)
+        elif 'i am going' in query:
+            speak("ok i will security camera to secure your device")
             cam = cv2.VideoCapture(0)
             while cam.isOpened():
                 ret, frame1 = cam.read()
@@ -122,12 +161,6 @@ def TaskExec():
         elif 'shutdown' in query or 'shut down' in query:
             speak('Shutting Down Windows')
             os.system("shutdown /s /t 00")
-        elif 'whatsapp' in query:
-            speak("opening Whatsapp")
-            whats = "C:\\Users\\JAGADEESWARARAO\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
-            os.startfile(whats)
-        elif 'pause' in query:
-            pyautogui.press("space")
         elif 'switch the window' in query:
             speak("I'll switch the window for you")
             pyautogui.hotkey("Alt", "Tab")
@@ -142,19 +175,19 @@ def TaskExec():
                 html = urllib.request.urlopen(
                     "https://www.youtube.com/results?search_query=" + search_keyword)
                 video_ids = re.findall(
-                    r"watch\?v=(\S{11})", html.read().decode())
+                    r"watch\\?v=(\\S{11})", html.read().decode())
                 webbrowser.open(
                     "https://www.youtube.com/watch?v=" + video_ids[0])
             else:
                 html = urllib.request.urlopen(
                     "https://www.youtube.com/results?search_query=" + search_keyword)
                 video_ids = re.findall(
-                    r"watch\?v=(\S{11})", html.read().decode())
+                    r"watch\\?v=(\\S{11})", html.read().decode())
                 webbrowser.open(
                     "https://www.youtube.com/watch?v=" + video_ids[0])
         elif "take a note" in query:
             speak("Please tellme what should i take note of")
-            hnote = open("hovernotes.txt","a")
+            hnote = open("hovernotes.txt", "a")
             hnote.write(takecommand())
             hnote.close()
         else:
@@ -162,4 +195,4 @@ def TaskExec():
 
 
 if __name__ == "__main__":
-        TaskExec()
+    listen()
