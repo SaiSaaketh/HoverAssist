@@ -40,10 +40,11 @@ def listen():
                 print("Listening.")
                 listener.adjust_for_ambient_noise(source)
                 listener.dynamic_energy_threshold = 5000
-                audio = listener.listen(source, timeout=5.0)
+                audio = listener.listen(source, timeout=3.0)
                 response = listener.recognize_google(audio, language="en-in")
+                response = response.lower()
                 print(response)
-                if "Hawa" in response or "how" in response:
+                if response == "ok google":
                     speak("How can I help you?")
                     TaskExec()
 
@@ -62,7 +63,7 @@ def takecommand():
         listener = sr.Recognizer()
         with sr.Microphone() as source:
             listener.adjust_for_ambient_noise(source)
-            listener.dynamic_energy_threshold = 3000
+            listener.dynamic_energy_threshold = 5000
             speak('listening...')
             voice = listener.listen(source, timeout=5.0)
             command = listener.recognize_google(voice, language="en-in")
