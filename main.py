@@ -44,7 +44,7 @@ def listen():
                 response = listener.recognize_google(audio, language="en-in")
                 response = response.lower()
                 print(response)
-                if response == "ok google":
+                if "hawa" in response and "how" in response:
                     speak("How can I help you?")
                     TaskExec()
 
@@ -120,10 +120,13 @@ def TaskExec():
             print("According to wikipedia"+results)
             speak('Accoding to wikipedia'+results)
         elif 'open youtube' in query:
+            speak("Opening Youtube")
             webbrowser.open('www.youtube.com')
         elif 'open stack overflow' in query:
+            speak("Opening Stackoverflow")
             webbrowser.open('www.stackoverflow.com')
         elif 'search' in query:
+            speak("Searching The Internet")
             search = query.replace("search", "")
             webbrowser.open(f'www.duckduckgo.com?q={search}')
         elif "whatsapp" in query:
@@ -131,7 +134,7 @@ def TaskExec():
             whats = "C:\\Users\\JAGADEESWARARAO\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
             os.startfile(whats)
         elif 'i am going' in query:
-            speak("ok i will security camera to secure your device")
+            speak("ok i will open ..security camera. to secure your device")
             cam = cv2.VideoCapture(0)
             while cam.isOpened():
                 ret, frame1 = cam.read()
@@ -156,9 +159,6 @@ def TaskExec():
                 if cv2.waitKey(10) == ord('q'):
                     break
                 cv2.imshow('Secure Cam', frame1)
-        elif 'bye' in query:
-            speak("ok Bye")
-            sys.exit()
         elif 'shutdown' in query or 'shut down' in query:
             speak('Shutting Down Windows')
             os.system("shutdown /s /t 00")
