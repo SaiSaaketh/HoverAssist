@@ -14,6 +14,7 @@ import urllib.request
 import re
 import winapps
 from pyttsx3.drivers import sapi5
+import pywhatkit
 
 # lists
 takephoto = {"take a shot", "take a photo", "take a snap",
