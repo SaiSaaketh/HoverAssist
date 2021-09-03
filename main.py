@@ -169,23 +169,7 @@ def TaskExec():
             speak("taking screenshot buddy")
             pyautogui.hotkey("Alt", "prtsc")
         elif "play" in query:
-            speak("what should i search yt for")
-            search_keyword = takecommand()
-            if "" in search_keyword:
-                search_keyword = search_keyword.replace(" ", "+")
-                html = urllib.request.urlopen(
-                    "https://www.youtube.com/results?search_query=" + search_keyword)
-                video_ids = re.findall(
-                    r"watch\\?v=(\\S{11})", html.read().decode())
-                webbrowser.open(
-                    "https://www.youtube.com/watch?v=" + video_ids[0])
-            else:
-                html = urllib.request.urlopen(
-                    "https://www.youtube.com/results?search_query=" + search_keyword)
-                video_ids = re.findall(
-                    r"watch\\?v=(\\S{11})", html.read().decode())
-                webbrowser.open(
-                    "https://www.youtube.com/watch?v=" + video_ids[0])
+            pywhatkit.playonyt(query.replace("play",""))
         elif "take a note" in query:
             speak("Please tellme what should i take note of")
             hnote = open("hovernotes.txt", "a")
