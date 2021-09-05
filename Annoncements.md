@@ -1,4 +1,4 @@
-# Release v0.2
+# Release v0.2 is going to be out on 15 September 🥳 #
 ## The Productivity Update ##
 ### Code Name: "Calcite" ###
 ### Features Going To be Added ##
