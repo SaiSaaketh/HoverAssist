@@ -2,11 +2,28 @@
  - HoverAssist v1.0 Pre-release
  - Hover Assist Pre-release
  - The First Update of HoverAssist is Releasing on 15 Aug 2021
+# Features #
+ - [x] Can open Whatsapp
+ - [x] Can Shutdown the pc
+ - [x] Can open camera
+ - [x] Can Take Screen shot 
+ - [x] search google   
 # v0.1 Release of Hover First Version #
 ## v0.1 Release Of Hover ##
 - The First Version Of Hover
 - The Official Stable build of Hover is Out Here
 - Happy Independence Day
+# Features #
+ - [x] Can open Whatsapp
+ - [x] Can Shutdown the pc
+ - [x] Can open camera
+ - [x] Can Take Screen shot 
+ - [x] search google 
+# Bug Fixes #
+- Removed unused or multiple times repeated commands
+- Added Security Profiler
+- Removed many times imported modules
+- removed unsed modules 
 ## The Update 0.1.1 For Hover ##
 ## Compatibily ##
 - Windows 7 and newer
