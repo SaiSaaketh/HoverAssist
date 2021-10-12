@@ -1,7 +1,8 @@
-pyttsx3
-wheel
+pyttsx3==2.90
 SpeechRecognition==3.8.1
-pywhatkit==4.7
 requests==2.25.1
 PyAutoGUI==0.9.52
 opencv-python==4.5.2.54
+google==3.0.0
+pywhatkit==5.1
+pywikihow==0.5.7

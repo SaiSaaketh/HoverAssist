@@ -1,184 +1,218 @@
-import pyttsx3
-import speech_recognition as sr
 import datetime
-import os
+import os  # os module is used to open files and run commands on the cmd and a lot of other features installation:deafult by python
+import webbrowser
 import cv2
-import webbrowser
-import requests
-import wikipedia
-import sys
-import winsound
-import webbrowser
 import pyautogui
-import urllib.request
-import re
-import winapps
+import pyttsx3  # pyttsx3 is module for text to speech installation:pip install pyttsx3
+import requests
+# speechrecogntion is the module which is used for recognizing audio and converting into text installation:pip install speechrecogntion
+import speech_recognition as sr
 from pyttsx3.drivers import sapi5
-import pywhatkit
 
-# lists
-takephoto = {"take a shot", "take a photo", "take a snap",
-             "cheese", "Yo take a photo", "take my family photo", "Snap that"}
-iamgoing = {"i am going", "I am going out",
-            "I'll be right back", "I'm Leaving", "I am leaving"}
-hour = int(datetime.datetime.now().hour)
+hour = datetime.datetime.now().hour
 
 
-def speak(audio):
-    engine = pyttsx3.init()
-    voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
-    engine.say(audio)
-    print(audio)
-    engine.runAndWait()
+class HoverAssist():
+    def __init__(self) -> None:
+        self.hour = int(datetime.datetime.now().hour)
+        self.engine = pyttsx3.init()
+        self.voices = self.engine.getProperty('voices')
+        self.engine.setProperty('voice', self.voices[0].id)
 
+    def speak(self, audio):
+        self.engine.say(audio)
+        print("                                                ")
+        print(f"Hover Said: {audio}")
+        self.engine.runAndWait()
 
-def listen():
-    listener = sr.Recognizer()
-    while True:
+    def listen(self):
+        while True:
+            listener = sr.Recognizer()
+            try:
+                with sr.Microphone() as source:
+                    audio = listener.listen(source, timeout=1.0)
+                    response = listener.recognize_google(audio)
+                    response = response.lower()
+                    if "hawa" in response or "how" in response:
+                        self.speak("How can I help you?")
+                        self.Analyze()
+                    else:
+                        pass
+            except sr.WaitTimeoutError:
+                pass
+            except sr.UnknownValueError:
+                pass
+            except sr.RequestError:
+                print("Network error.")
+
+    def takecommand(self):
+        listener = sr.Recognizer()
+        command = ""
         try:
             with sr.Microphone() as source:
-                print("Listening.")
-                listener.adjust_for_ambient_noise(source)
-                listener.dynamic_energy_threshold = 5000
-                audio = listener.listen(source, timeout=3.0)
-                response = listener.recognize_google(audio, language="en-in")
-                response = response.lower()
-                print(response)
-                if "hawa" in response and "how" in response:
-                    speak("How can I help you?")
-                    TaskExec()
-
-                else:
-                    pass
+                voice = listener.listen(source, phrase_time_limit=4)
+                command = listener.recognize_google(voice)
+                print(f"User Said: {command}")
+                print("                                      ")
         except sr.WaitTimeoutError:
             pass
         except sr.UnknownValueError:
             pass
         except sr.RequestError:
             print("Network error.")
+        return command.lower()
 
+    def wish(self, hour):
+        if hour > 0 and hour < 12:
+            self.speak('Good Morning')
+        elif hour > 12 and hour > 15:
+            self.speak('Good Afternoon')
+        else:
+            self.speak('Good Evening')
 
-def takecommand():
-    try:
-        listener = sr.Recognizer()
-        with sr.Microphone() as source:
-            listener.adjust_for_ambient_noise(source)
-            listener.dynamic_energy_threshold = 5000
-            speak('listening...')
-            voice = listener.listen(source, timeout=5.0)
-            command = listener.recognize_google(voice, language="en-in")
-            print(command)
-    except sr.WaitTimeoutError:
-        pass
-    except sr.UnknownValueError:
-        pass
-    except sr.RequestError:
-        print("Network error.")
-    return command.lower()
-
-
-def wish():
-    if hour > 0 and hour < 12:
-        speak('Good Morning')
-    elif hour > 12 and hour > 15:
-        speak('Good Afternoon')
-    else:
-        speak('Good Evening')
-
-
-def TaskExec():
-    if __name__ == "__main__":
-        query = takecommand().lower()
+    def Analyze(self):
+        query = self.takecommand().lower()
         if query == "open notepad":
             os.system("notepad")
+
         elif "what is the time" in query:
-            min = datetime.datetime.now().minute
-            speak(f"It is {hour} hours {min} minutes")
+            min = datetime.datetime.now().strftime("%I:%M %p")
+            self.speak(f"It is {min}")
+
         elif 'browser' in query:
-            speak("opening Browser ")
+            self.speak("opening Browser ")
             webbrowser.open("https://www.google.com")
+
         elif 'open cmd' in query or 'open command prompt' in query:
-            speak('Opening CMD')
+            self.speak('Opening CMD')
             os.system("start cmd")
-        elif 'camera' in query:
-            cap = cv2.VideoCapture(0)
+
+        elif 'open camera' in query:
+            self.capture = cv2.VideoCapture(0)
             while True:
-                ret, img = cap.read()
+                ret, img = self.capture.read()
                 cv2.imshow('Camera', img)
                 k = cv2.waitKey(27)
                 if k == 27:
                     break
-            cap.release()
-            cap.destroyAllWindows()
+
+        elif 'close camera' in query:
+            self.capture.release()
+            self.capture.destroyAllWindows()
+
         elif 'ip address' in query:
             ip = requests.get('https://api.ipify.org').text
-            speak(f"your ip is {ip}")
+            self.speak(f"your ip is {ip}")
+
         elif 'wikipedia' in query:
-            speak('Searching Wikipedia')
+            self.speak('Searching Wikipedia')
+            import wikipedia
             query = query.replace('wikipedia', '')
             results = wikipedia.summary(query, sentences=3)
-            print("According to wikipedia"+results)
-            speak('Accoding to wikipedia'+results)
+            self.speak('Accoding to wikipedia'+results)
+
         elif 'open youtube' in query:
-            speak("Opening Youtube")
+            self.speak("Opening Youtube")
             webbrowser.open('www.youtube.com')
+
         elif 'open stack overflow' in query:
-            speak("Opening Stackoverflow")
+            self.speak("Opening Stackoverflow")
             webbrowser.open('www.stackoverflow.com')
+
         elif 'search' in query:
-            speak("Searching The Internet")
+            self.speak("Searching The Internet")
             search = query.replace("search", "")
-            webbrowser.open(f'www.duckduckgo.com?q={search}')
-        elif "whatsapp" in query:
-            speak("opening whatsapp")
-            whats = "C:\\Users\\JAGADEESWARARAO\\AppData\\Local\\WhatsApp\\WhatsApp.exe"
-            os.startfile(whats)
+            webbrowser.open(f'www.google.com/search?q={search}')
+
         elif 'i am going' in query:
-            speak("ok i will open ..security camera. to secure your device")
-            cam = cv2.VideoCapture(0)
-            while cam.isOpened():
-                ret, frame1 = cam.read()
-                ret, frame2 = cam.read()
-                diff = cv2.absdiff(frame1, frame2)
-                gray = cv2.cvtColor(diff, cv2.COLOR_RGB2GRAY)
-                blur = cv2.GaussianBlur(gray, (5, 5), 0)
-                _, thresh = cv2.threshold(
-                    blur, 20, 255, cv2.THRESH_BINARY)
-                dilated = cv2.dilate(thresh, None, iterations=3)
-                contours, _ = cv2.findContours(
-                    dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                # cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
-                for c in contours:
-                    if cv2.contourArea(c) < 20000:
-                        continue
-                    x, y, w, h = cv2.boundingRect(c)
-                    cv2.rectangle(frame1, (x, y),
-                                  (x+w, y+h), (0, 255, 0), 2)
-                    winsound.PlaySound(
-                        'alert.wav', winsound.SND_ASYNC)
-                if cv2.waitKey(10) == ord('q'):
-                    break
-                cv2.imshow('Secure Cam', frame1)
+            self.speak(
+                "ok i will open ..security camera. to secure your device")
+            from Feature import Security_Cam
+            Security_Cam()
+
+        elif 'open' in query.lower():
+            from Feature import Webopener
+            query = query.replace("open", "")
+            query = query.replace("chrome", "")
+            self.speak(f"Opening {query} ")
+            Webopener.webopen(query=query)
+
+        elif "weather" in query:
+            from Feature import Weather
+            w = Weather()
+            self.speak(w)
+        elif 'how' in query:
+            import pywikihow
+            how = pywikihow.search_wikihow(query, max_results=1)
+            assert len(how) == 1
+            how[0].print()
+            self.speak(how[0].summary)
+
         elif 'shutdown' in query or 'shut down' in query:
-            speak('Shutting Down Windows')
+            self.speak('Shutting Down Windows')
             os.system("shutdown /s /t 00")
+
         elif 'switch the window' in query:
-            speak("I'll switch the window for you")
+            self.speak("I'll switch the window for you")
             pyautogui.hotkey("Alt", "Tab")
+
         elif 'take a screenshot' in query:
-            speak("taking screenshot buddy")
-            pyautogui.hotkey("Alt", "prtsc")
+            self.speak("taking screenshot buddy")
+            pyautogui.hotkey("Win", "prtsc")
+
+        elif "volume up" in query:
+            pyautogui.press("volumeup")
+
+        elif "volume down" in query:
+            pyautogui.press("volumedown")
+
+        elif "remind me" in query:
+            import threading
+            self.speak("What should i remind you for")
+            name = self.takecommand()
+            self.speak("When Should I Remind You")
+            time = self.takecommand()
+            from Feature import Reminder
+            tt = time
+            tt = tt.replace(".", "")
+            tt = tt.upper()
+            h = threading.Thread(target=lambda: Reminder(tt, name))
+
         elif "play" in query:
-            pywhatkit.playonyt(query.replace("play",""))
-        elif "take a note" in query:
-            speak("Please tellme what should i take note of")
-            hnote = open("hovernotes.txt", "a")
-            hnote.write(takecommand())
-            hnote.close()
+            import pywhatkit
+            query = query.replace("play", "")
+            self.speak(f"Playing {query}")
+            pywhatkit.playonyt(query)
+
+        elif "note" in query:
+            from Feature import Takenote
+            Takenote()
+
+        elif "alarm" in query:
+            self.speak(
+                "Sir Please Tell Me The Time to set alarm. For Example, Set Alarm to 5:30 A.M")
+            tt = self.takecommand()
+            tt = tt.replace("set alarm to ", "")
+            tt = tt.replace(".", "")
+            tt = tt.upper()
+            import threading
+
+            from Feature import Alarm
+            m = threading.Thread(target=lambda: Alarm(tt)).start()
+
+        elif "timer" in query:
+            import threading
+
+            from Feature import Timer
+            query = query.replace("set a timer for ", "")
+            query = query.replace("minutes", "")
+            query = query.replace("minute", "")
+            t = threading.Thread(target=lambda: Timer(int(query))).start()
+
         else:
-            speak('i donot know that')
+            pass
 
 
-if __name__ == "__main__":
-    listen()
+Hover = HoverAssist()
+Hover.wish(hour=hour)
+Hover.listen()
