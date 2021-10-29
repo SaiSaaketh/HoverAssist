@@ -8,11 +8,14 @@ import requests
 # speechrecogntion is the module which is used for recognizing audio and converting into text installation:pip install speechrecogntion
 import speech_recognition as sr
 from pyttsx3.drivers import sapi5
+import functools
+from Feature import *
 
 hour = datetime.datetime.now().hour
 
 
-class HoverAssist():
+class HoverAssist:
+    
     def __init__(self) -> None:
         self.hour = int(datetime.datetime.now().hour)
         self.engine = pyttsx3.init()
@@ -24,7 +27,8 @@ class HoverAssist():
         print("                                                ")
         print(f"Hover Said: {audio}")
         self.engine.runAndWait()
-
+        self.engine.stop()
+        
     def listen(self):
         while True:
             listener = sr.Recognizer()
@@ -61,7 +65,8 @@ class HoverAssist():
         except sr.RequestError:
             print("Network error.")
         return command.lower()
-
+    
+    @functools.lru_cache()
     def wish(self, hour):
         if hour > 0 and hour < 12:
             self.speak('Good Morning')
@@ -127,11 +132,9 @@ class HoverAssist():
         elif 'i am going' in query:
             self.speak(
                 "ok i will open ..security camera. to secure your device")
-            from Feature import Security_Cam
             Security_Cam()
 
         elif 'open' in query.lower():
-            from Feature import Webopener
             query = query.replace("open", "")
             query = query.replace("chrome", "")
             self.speak(f"Opening {query} ")
@@ -141,11 +144,11 @@ class HoverAssist():
             from Feature import Weather
             w = Weather()
             self.speak(w)
+            
         elif 'how' in query:
             import pywikihow
             how = pywikihow.search_wikihow(query, max_results=1)
             assert len(how) == 1
-            how[0].print()
             self.speak(how[0].summary)
 
         elif 'shutdown' in query or 'shut down' in query:
@@ -185,7 +188,6 @@ class HoverAssist():
             pywhatkit.playonyt(query)
 
         elif "note" in query:
-            from Feature import Takenote
             Takenote()
 
         elif "alarm" in query:
@@ -196,14 +198,10 @@ class HoverAssist():
             tt = tt.replace(".", "")
             tt = tt.upper()
             import threading
-
-            from Feature import Alarm
             m = threading.Thread(target=lambda: Alarm(tt)).start()
 
         elif "timer" in query:
             import threading
-
-            from Feature import Timer
             query = query.replace("set a timer for ", "")
             query = query.replace("minutes", "")
             query = query.replace("minute", "")

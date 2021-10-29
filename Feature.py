@@ -26,7 +26,8 @@ def speak(audio):
     engine.say(audio)
     print("                                                  ")
     print(f"Hover Said: {audio}")
-    engine.runAndWait()
+    engine.runAndWait()   
+    self.engine.stop()
 
 
 def takecommand():
@@ -77,23 +78,28 @@ def Webopener():
         urls = []
         for j in search(query=query, tld="co.in", num=1, stop=1, pause=1):
             webbrowser.open(j)
+    print("done")
 
 
 def Alarm(Timing):
-    altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
-
+    try:
+        altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
+    except ValueError:
+        speak("I think I didn't catch it in a bit please say that again")
+        Timimg = takecommand()
+        altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
     altime =  altime[11:-3]
 
     Horeal = altime[:2]
     Horeal = int(Horeal)
     Mireal = altime[3:5]
     Mireal = int(Mireal)
-    speak(f"Done Set an Reminder for {Timing}")
+    speak(f"Done Set an Alarm for {Timing}")
 
     while True:
         if Horeal == datetime.datetime.now().hour:
             if Mireal == datetime.datetime.now().minute:
-                print("The alarm has been completed")
+                speak("The alarm has been completed")
                 winsound.PlaySound('alert.wav', winsound.SND_FILENAME)
 
         elif Mireal<datetime.datetime.now().minute:
