@@ -1,14 +1,13 @@
 import datetime
 import os  # os module is used to open files and run commands on the cmd and a lot of other features installation:deafult by python
 import webbrowser
-import cv2
+import win10toast
 import pyautogui
 import pyttsx3  # pyttsx3 is module for text to speech installation:pip install pyttsx3
-import requests
-# speechrecogntion is the module which is used for recognizing audio and converting into text installation:pip install speechrecogntion
-import speech_recognition as sr
+import requests  # requests module is used to send requests to websites to retrive their data installattion: pinpi install requests
+import speech_recognition as sr  # speechrecogntion is the module which is used for recognizing audio and converting into text installation:pip install speechrecogntion
 from pyttsx3.drivers import sapi5
-import functools
+
 from Feature import *
 
 hour = datetime.datetime.now().hour
@@ -24,7 +23,6 @@ class HoverAssist:
 
     def speak(self, audio):
         self.engine.say(audio)
-        print("                                                ")
         print(f"Hover Said: {audio}")
         self.engine.runAndWait()
         self.engine.stop()
@@ -34,11 +32,17 @@ class HoverAssist:
             listener = sr.Recognizer()
             try:
                 with sr.Microphone() as source:
-                    audio = listener.listen(source, timeout=1.0)
+                    audio = listener.listen(source, timeout=0.5)
                     response = listener.recognize_google(audio)
                     response = response.lower()
                     if "hawa" in response or "how" in response:
-                        self.speak("How can I help you?")
+                        self.speak("Listening")
+                        win10toast.ToastNotifier().show_toast(
+                            "HoverAssist",
+                            "Listening...",
+                            icon_path="favicon.ico",
+                            threaded= False,
+                        )
                         self.Analyze()
                     else:
                         pass
@@ -66,7 +70,6 @@ class HoverAssist:
             print("Network error.")
         return command.lower()
     
-    @functools.lru_cache()
     def wish(self, hour):
         if hour > 0 and hour < 12:
             self.speak('Good Morning')
@@ -92,19 +95,6 @@ class HoverAssist:
             self.speak('Opening CMD')
             os.system("start cmd")
 
-        elif 'open camera' in query:
-            self.capture = cv2.VideoCapture(0)
-            while True:
-                ret, img = self.capture.read()
-                cv2.imshow('Camera', img)
-                k = cv2.waitKey(27)
-                if k == 27:
-                    break
-
-        elif 'close camera' in query:
-            self.capture.release()
-            self.capture.destroyAllWindows()
-
         elif 'ip address' in query:
             ip = requests.get('https://api.ipify.org').text
             self.speak(f"your ip is {ip}")
@@ -115,14 +105,6 @@ class HoverAssist:
             query = query.replace('wikipedia', '')
             results = wikipedia.summary(query, sentences=3)
             self.speak('Accoding to wikipedia'+results)
-
-        elif 'open youtube' in query:
-            self.speak("Opening Youtube")
-            webbrowser.open('www.youtube.com')
-
-        elif 'open stack overflow' in query:
-            self.speak("Opening Stackoverflow")
-            webbrowser.open('www.stackoverflow.com')
 
         elif 'search' in query:
             self.speak("Searching The Internet")
@@ -138,7 +120,7 @@ class HoverAssist:
             query = query.replace("open", "")
             query = query.replace("chrome", "")
             self.speak(f"Opening {query} ")
-            Webopener.webopen(query=query)
+            Webopener(query=query)
 
         elif "weather" in query:
             from Feature import Weather
@@ -164,9 +146,14 @@ class HoverAssist:
             pyautogui.hotkey("Win", "prtsc")
 
         elif "volume up" in query:
+            self.speak("Turning the volume up")
             pyautogui.press("volumeup")
+        
+        elif "speed test" in query or "speedtest" in query:
+            SpeedTest(query=query)
 
         elif "volume down" in query:
+            self.speak("Turning the volume down")
             pyautogui.press("volumedown")
 
         elif "remind me" in query:
@@ -190,6 +177,9 @@ class HoverAssist:
         elif "note" in query:
             Takenote()
 
+        elif "news" in query:
+            News()
+
         elif "alarm" in query:
             self.speak(
                 "Sir Please Tell Me The Time to set alarm. For Example, Set Alarm to 5:30 A.M")
@@ -210,7 +200,9 @@ class HoverAssist:
         else:
             pass
 
+if __name__ == '__main__':
+    Hover = HoverAssist()
+    Hover.wish(hour=hour)
+    Hover.listen()
 
-Hover = HoverAssist()
-Hover.wish(hour=hour)
-Hover.listen()
+

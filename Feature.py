@@ -3,7 +3,6 @@ import threading
 import speech_recognition as sr
 import datetime
 import os
-import cv2
 import webbrowser
 import requests
 import wikipedia
@@ -15,6 +14,8 @@ import pywhatkit
 import pywikihow
 from googlesearch import search
 import webbrowser
+import json
+import numpy
 
 hour = int(datetime.datetime.now().hour)
 engine = pyttsx3.init()
@@ -27,7 +28,7 @@ def speak(audio):
     print("                                                  ")
     print(f"Hover Said: {audio}")
     engine.runAndWait()   
-    self.engine.stop()
+    engine.stop()
 
 
 def takecommand():
@@ -70,24 +71,16 @@ def Security_Cam():
         cv2.imshow('Secure Cam', frame1)
 
 
-def Webopener():
+def Webopener(query):
     USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-
-    def webopen(query):
-        # scraping data
-        urls = []
-        for j in search(query=query, tld="co.in", num=1, stop=1, pause=1):
-            webbrowser.open(j)
-    print("done")
+    urls = []
+    for j in search(query=query, tld="co.in", num=1, stop=1, pause=1):
+        webbrowser.open(j)
 
 
 def Alarm(Timing):
-    try:
-        altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
-    except ValueError:
-        speak("I think I didn't catch it in a bit please say that again")
-        Timimg = takecommand()
-        altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
+
+    altime = str(datetime.datetime.now().strptime(Timing, "%I:%M %p"))
     altime =  altime[11:-3]
 
     Horeal = altime[:2]
@@ -102,8 +95,8 @@ def Alarm(Timing):
                 speak("The alarm has been completed")
                 winsound.PlaySound('alert.wav', winsound.SND_FILENAME)
 
-        elif Mireal<datetime.datetime.now().minute:
-            break
+            elif Mireal<datetime.datetime.now().minute:
+                break
 
 
 def Weather():
@@ -164,4 +157,37 @@ def Timer(mins):
     mins = f"{mins}minutes"
     speak(f"The {mins} Timer has been completed")
     winsound.PlaySound('alert.wav', winsound.SND_FILENAME)
-    
+
+def News():
+    import requests
+    from bs4 import BeautifulSoup
+
+    url='https://news.google.com/'
+    response = requests.get(url)
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    headlines = soup.find('body').find_all('h3')
+    for x in headlines:
+        speak("Here Are the Top Headlines:")
+        speak(x.text.strip())
+
+def SpeedTest(query):
+    speak("Wait a minute while the the results are being proccesed")
+    speedobj = speedtest.Speedtest()
+    speedobj.get_best_server()
+    upload = int(speedobj.upload())
+    correct_upload = numpy.round(upload/800000)
+    download =  int(speedobj.download())
+    correct_download = numpy.round(download/800000)
+    ping = numpy.round(int(speedobj.results.ping))
+    if "download" in query:
+        speak(f"The Download Speed is {correct_download}")
+    elif "upload" in query:
+        speak(f"The Upload Speed is {correct_upload}")
+    elif "ping" in query:
+        speak(f"The ping speed is {ping}")
+    else:
+        speak("The Speed Test results are here")
+        speak(f"The ping speed is {ping} ms")
+        speak(f"The Upload Speed is {correct_upload} mbps")
+        speak(f"The Download Speed is {correct_download} mbps")
