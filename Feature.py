@@ -14,8 +14,9 @@ import pywhatkit
 import pywikihow
 from googlesearch import search
 import webbrowser
-import json
+import speedtest
 import numpy
+import cv2
 
 hour = int(datetime.datetime.now().hour)
 engine = pyttsx3.init()
